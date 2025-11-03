@@ -6,12 +6,12 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "db:reset": "ts-node -r dotenv/config src/db/reset.ts",
     "setup:db": "cross-env DOTENV_CONFIG_PATH=.env ts-node -r dotenv/config src/db/setup.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
+    "build": "tsc -p tsconfig.build.json",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

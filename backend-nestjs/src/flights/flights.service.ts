@@ -45,6 +45,12 @@ export class FlightsService {
       `;
 
     const { rows } = await this.pool.query<Flight>(sql, params);
+
+    if (rows.length === 0) {
+      throw new NotFoundException(
+        'No flight found matching provided queries'
+      )
+    }
     return rows;
   }
 
