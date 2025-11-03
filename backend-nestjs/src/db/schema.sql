@@ -28,10 +28,52 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 CREATE INDEX IF NOT EXISTS idx_bookings_flight_id ON bookings (flight_id);
 
--- === Seed Data =============================================================
--- Two example flights to test API with
+-- === Seed Flights ==========================================================
 INSERT INTO flights (flight_number, origin, destination, departure_time, arrival_time, capacity)
 VALUES
   ('AI-202', 'JFK', 'LAX', NOW() + INTERVAL '7 days', NOW() + INTERVAL '7 days 6 hours', 180),
   ('BA-305', 'LHR', 'JFK', NOW() + INTERVAL '8 days', NOW() + INTERVAL '8 days 7 hours', 200)
 ON CONFLICT (flight_number) DO NOTHING;
+
+-- === Seed Bookings =========================================================
+-- Bookings linked to the flights above (using subqueries for dynamic flight_id lookup)
+
+INSERT INTO bookings (flight_id, passenger_name, seat_class, status)
+SELECT id, 'John Doe', 'ECONOMY', 'CONFIRMED'
+FROM flights
+WHERE flight_number = 'AI-202'
+AND NOT EXISTS (
+  SELECT 1 FROM bookings b
+  WHERE b.passenger_name = 'John Doe'
+    AND b.flight_id = flights.id
+);
+
+INSERT INTO bookings (flight_id, passenger_name, seat_class, status)
+SELECT id, 'Jane Smith', 'BUSINESS', 'CONFIRMED'
+FROM flights
+WHERE flight_number = 'AI-202'
+AND NOT EXISTS (
+  SELECT 1 FROM bookings b
+  WHERE b.passenger_name = 'Jane Smith'
+    AND b.flight_id = flights.id
+);
+
+INSERT INTO bookings (flight_id, passenger_name, seat_class, status)
+SELECT id, 'Michael Johnson', 'FIRST', 'CONFIRMED'
+FROM flights
+WHERE flight_number = 'BA-305'
+AND NOT EXISTS (
+  SELECT 1 FROM bookings b
+  WHERE b.passenger_name = 'Michael Johnson'
+    AND b.flight_id = flights.id
+);
+
+INSERT INTO bookings (flight_id, passenger_name, seat_class, status)
+SELECT id, 'Emily Davis', 'ECONOMY', 'CANCELLED'
+FROM flights
+WHERE flight_number = 'BA-305'
+AND NOT EXISTS (
+  SELECT 1 FROM bookings b
+  WHERE b.passenger_name = 'Emily Davis'
+    AND b.flight_id = flights.id
+);
