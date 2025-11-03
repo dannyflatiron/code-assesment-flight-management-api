@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { FlightsService } from './flights.service';
 import { CreateFlightInput, Flight } from './flight.types';
+import { ApiTags, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
 type MaybeDateInput = Omit<
   CreateFlightInput,
@@ -18,10 +19,16 @@ type MaybeDateInput = Omit<
   arrival_time: string | Date;
 };
 
+@ApiTags('Flights')
 @Controller('flights')
 export class FlightsController {
   constructor(private readonly flightsService: FlightsService) {}
 
+  @ApiOperation({ summary: 'Search or list flights' })
+  @ApiQuery({ name: 'origin', required: false, example: 'JFK' })
+  @ApiQuery({ name: 'destination', required: false, example: 'LAX' })
+  @ApiQuery({ name: 'date', required: false, example: '2025-11-10', description: 'YYYY-MM-DD (UTC)' })
+  @ApiResponse({ status: 200, description: 'Array of flights' })
   @Get()
   getAll(
     @Query('origin') origin?: string,
@@ -40,11 +47,17 @@ export class FlightsController {
     return this.flightsService.search(o, d, dt);
   }
 
+  @ApiOperation({ summary: 'Get a flight by id' })
+  @ApiParam({ name: 'id', example: 1 })
+  @ApiResponse({ status: 200, description: 'Flight found' })
+  @ApiResponse({ status: 404, description: 'Flight not found' })
   @Get(':id')
   getOne(@Param('id', ParseIntPipe) id: number): Promise<Flight> {
     return this.flightsService.findOne(id);
   }
 
+  @ApiOperation({ summary: 'Create a flight' })
+  @ApiResponse({ status: 201, description: 'Flight created' })
   @Post()
   create(@Body() body: MaybeDateInput): Promise<Flight> {
     const toISO = (v: string | Date) =>
