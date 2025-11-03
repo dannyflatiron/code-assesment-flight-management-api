@@ -77,3 +77,8 @@ AND NOT EXISTS (
   WHERE b.passenger_name = 'Emily Davis'
     AND b.flight_id = flights.id
 );
+
+-- ensure created_at exists for bookings
+ALTER TABLE bookings
+  ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
+
