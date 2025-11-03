@@ -1,6 +1,7 @@
 import { Controller, Post, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingInput, CreateBookingResponse, CancelBookingResponse } from './booking.types';
+import { CreateBookingDto } from './dto/create-booking.dto';
 
 @Controller('api/flights/:id/bookings')
 export class BookingsController {
@@ -11,14 +12,13 @@ export class BookingsController {
   @Post()
   async book(
     @Param('id', ParseIntPipe) flightId: number,
-    @Body() body: { passengerName: string; seatClass: string },
+    @Body() dto: CreateBookingDto,
   ): Promise<CreateBookingResponse> {
-    const input: CreateBookingInput = {
+    return this.bookings.bookOne({
       flightId,
-      passengerName: body?.passengerName,
-      seatClass: body?.seatClass,
-    };
-    return this.bookings.bookOne(input);
+      passengerName: dto.passengerName,
+      seatClass: dto.seatClassDb
+    });
   }
 
   // cancel existing booking
