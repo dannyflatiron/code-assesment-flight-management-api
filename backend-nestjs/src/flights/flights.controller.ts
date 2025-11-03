@@ -1,4 +1,3 @@
-// backend-nestjs/src/flights/flights.controller.ts
 import {
   Body,
   Controller,
@@ -6,7 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Delete,
+  Query,
 } from '@nestjs/common';
 import { FlightsService } from './flights.service';
 import { CreateFlightInput, Flight } from './flight.types';
@@ -24,8 +23,21 @@ export class FlightsController {
   constructor(private readonly flightsService: FlightsService) {}
 
   @Get()
-  getAll(): Promise<Flight[]> {
-    return this.flightsService.findAll();
+  getAll(
+    @Query('origin') origin?: string,
+    @Query('desitination') destination?: string,
+    @Query('date') date?: string,
+  ): Promise<Flight[]> {
+    const hasFilters = Boolean(origin || destination || date);
+    if (!hasFilters) {
+      return this.flightsService.findAll();
+    }
+
+    // normalize codes & date string
+    const o = origin?.trim().toUpperCase();
+    const d = destination?.trim().toUpperCase();
+    const dt = date?.trim(); // expect YYYY-MM-DD
+    return this.flightsService.search(o, d, dt);
   }
 
   @Get(':id')

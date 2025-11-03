@@ -12,6 +12,42 @@ import { Flight } from './flight.types';
 export class FlightsService {
   constructor(@Inject(PG_POOL) private readonly pool: Pool) {}
 
+  // Search by origin, destination, and departure calendar date (UTC)
+  async search(
+    originQuery: string | undefined,
+    destinationQuery: string | undefined,
+    departureDateQuery: string | undefined,
+  ): Promise<Flight[]> {
+    const where: string[] = [];
+    const params: any[] = [];
+    let i = 1;
+
+    if (originQuery) {
+      where.push(`UPPER(origin) = $${i++}`);
+      params.push(originQuery.toUpperCase());
+    }
+    if (destinationQuery) {
+      where.push(`UPPER(destination) = $${i++}`);
+      params.push(destinationQuery.toUpperCase());
+    }
+    if (departureDateQuery) {
+      // match flights departing on that YYYY-MM-DD (UTC)
+      where.push(`DATE(departure_time) = $${i++}::date`); //omg
+      params.push(departureDateQuery);
+    }
+
+    const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+    const sql = `
+        SELECT id, flight_number, origin, destination, departure_time, arrival_time
+        FROM flights
+        ${whereSql}
+        ORDER BY departure_time ASC
+      `;
+
+    const { rows } = await this.pool.query<Flight>(sql, params);
+    return rows;
+  }
+
   async create(input: Omit<Flight, 'id'>): Promise<Flight> {
     this.assertCreateInput(input);
 
@@ -108,5 +144,4 @@ export class FlightsService {
     if (!flight) throw new NotFoundException('Flight not found');
     return flight;
   }
-
 }
