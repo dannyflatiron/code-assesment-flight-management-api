@@ -125,29 +125,4 @@ describe('FlightsService (unit)', () => {
 
     expect(mockPool.query).toHaveBeenCalledTimes(3); // exists + insert + exists
   });
-
-  //   it('update: rejects if new arrival breaks arrival>departure', () => {
-  //     const f = svc.create({
-  //       flight_number: 'JB-22',
-  //       origin: 'JFK',
-  //       destination: 'MCO',
-  //       departure_time: '2025-08-01T12:00:00.000Z',
-  //       arrival_time: '2025-08-01T14:00:00.000Z',
-  //     });
-  //     expect(async () =>
-  //       svc.update((await f).id, { arrival_time: '2025-08-01T11:59:00.000Z' }),
-  //     ).toThrow(BadRequestException);
-  //   });
-
-  //   it('delete then fetch -> 404', () => {
-  //     const f = svc.create({
-  //       flight_number: 'EK-500',
-  //       origin: 'DXB',
-  //       destination: 'JFK',
-  //       departure_time: '2025-09-01T10:00:00.000Z',
-  //       arrival_time: '2025-09-01T18:00:00.000Z',
-  //     });
-  //     svc.remove(f.id);
-  //     expect(() => svc.findOne(f.id)).toThrow(NotFoundException);
-  //   });
 });
