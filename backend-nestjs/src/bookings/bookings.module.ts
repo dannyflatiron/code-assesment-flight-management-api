@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { DbModule } from '../db/db.module';         // provides the PG_POOL
-import { BookingsController } from './bookings.controller';
+import { BookingsAdminController, BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 
 @Module({
   imports: [DbModule],
-  controllers: [BookingsController],
+  controllers: [BookingsController, BookingsAdminController],
   providers: [BookingsService],
   exports: [BookingsService],
 })

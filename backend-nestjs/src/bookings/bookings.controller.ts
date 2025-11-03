@@ -1,8 +1,16 @@
-import { Controller, Post, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Delete, Param, Body, ParseIntPipe, Get } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
-import { CreateBookingInput, CreateBookingResponse, CancelBookingResponse } from './booking.types';
+import { CreateBookingResponse, CancelBookingResponse } from './booking.types';
 import { CreateBookingDto } from './dto/create-booking.dto';
 
+@Controller('api/bookings')
+export class BookingsAdminController {
+  constructor(private readonly bookings: BookingsService) {}
+  @Get()
+  listAll() {
+    return this.bookings.listAll();
+  }
+}
 @Controller('api/flights/:id/bookings')
 export class BookingsController {
   constructor(private readonly bookings: BookingsService) {}

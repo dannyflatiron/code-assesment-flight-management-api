@@ -13,6 +13,17 @@ import {
   CancelBookingResponse,
 } from './booking.types';
 
+type BookingView = {
+  bookingId: number;
+  flightId: number;
+  passengerName: string;
+  seatClass: 'Economy' | 'Business' | 'First';
+  status: 'Confirmed' | 'Cancelled';
+  createdAt: string;
+};
+
+const toTitle = (s: string) => s.charAt(0) + s.slice(1).toLowerCase();
+
 @Injectable()
 export class BookingsService {
   constructor(@Inject(PG_POOL) private readonly pool: Pool) {}
@@ -149,5 +160,22 @@ export class BookingsService {
     } finally {
       client.release();
     }
+  }
+
+  async listAll(): Promise<BookingView[]> {
+    const { rows } = await this.pool.query<Booking>(`
+      SELECT id, flight_id, passenger_name, seat_class, status, created_at
+      FROM bookings
+      ORDER BY id ASC
+    `);
+
+    return rows.map(b => ({
+      bookingId: b.id,
+      flightId: b.flight_id,
+      passengerName: b.passenger_name,
+      seatClass: toTitle(b.seat_class) as BookingView['seatClass'],
+      status: toTitle(b.status) as BookingView['status'],
+      createdAt: b.created_at,
+    }));
   }
 }
