@@ -15,7 +15,7 @@ export const PG_POOL = Symbol('PG_POOL');
         if (url) return new Pool({ connectionString: url });
         return new Pool({
           host: config.get('DB_HOST', 'localhost'),
-          port: parseInt(config.get('DB_PORT', '5432'), 10),
+          port: parseInt(config.get('DB_PORT', '3000'), 10),
           user: config.get('process.env.DB_USERNAME'),
           password: config.get('process.env.DB_PASSWORD'),
           database: config.get('DB_NAME', 'flight_management'),
