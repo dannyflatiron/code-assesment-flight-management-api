@@ -1,17 +1,35 @@
 services:
-  postgres:
+  flight_db:
     image: postgres:15
     container_name: flight_db
-    restart: always
-    ports:
-      - "5432:5432"
     environment:
-      POSTGRES_DB: flights_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: flights
+    ports:
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./db:/docker-entrypoint-initdb.d        
+      - flight_db_data:/var/lib/postgresql/data 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d flights"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  flights_api:
+    build:
+      context: ./backend-nestjs
+      dockerfile: Dockerfile
+    depends_on:
+      flight_db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@flight_db:5432/flights
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - "3000:3000"
 
 volumes:
-  postgres_data:
+  flight_db_data:

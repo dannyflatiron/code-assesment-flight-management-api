@@ -1,0 +1,11 @@
+# Ignore node_modules everywhere
+node_modules
+# Ignore environment files everywhere
+.env
+*.env
+**/.env
+**/*.env
+# Logs and build output
+dist
+build
+coverage
