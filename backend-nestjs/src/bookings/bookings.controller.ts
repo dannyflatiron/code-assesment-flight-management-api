@@ -3,7 +3,7 @@ import { BookingsService } from './bookings.service';
 import { CreateBookingResponse, CancelBookingResponse } from './booking.types';
 import { CreateBookingDto } from './dto/create-booking.dto';
 
-@Controller('api/bookings')
+@Controller('bookings')
 export class BookingsAdminController {
   constructor(private readonly bookings: BookingsService) {}
   @Get()
@@ -11,7 +11,7 @@ export class BookingsAdminController {
     return this.bookings.listAll();
   }
 }
-@Controller('api/flights/:id/bookings')
+@Controller('flights/:id/bookings')
 export class BookingsController {
   constructor(private readonly bookings: BookingsService) {}
 
