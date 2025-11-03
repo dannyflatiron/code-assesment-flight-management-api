@@ -23,11 +23,11 @@ export interface CreateBookingInput {
 // successful booking response
 export interface CreateBookingResponse {
   bookingId: number;
-  status: 'Booking Confirmed'; // human-readable not db format
+  status: 'Booking confirmed.'; // human-readable not db format
 }
 
 export interface CancelBookingResponse {
-  message: 'Booking Cancelled Successfully';
+  message: 'Booking canceled successfully.';
 }
 
 export interface ErrorResponse {
