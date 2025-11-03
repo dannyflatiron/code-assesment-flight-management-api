@@ -16,8 +16,8 @@ export const PG_POOL = Symbol('PG_POOL');
         return new Pool({
           host: config.get('DB_HOST', 'localhost'),
           port: parseInt(config.get('DB_PORT', '5432'), 10),
-          user: config.get('DB_USERNAME', 'flight_user'),
-          password: config.get('DB_PASSWORD', 'flight_pass'),
+          user: config.get('process.env.DB_USERNAME'),
+          password: config.get('process.env.DB_PASSWORD'),
           database: config.get('DB_NAME', 'flight_management'),
         });
       },
